@@ -73,6 +73,7 @@ export default async function PostPage({
     notFound();
   }
 
+//   throw new Error('Unexpected error!'); // test error boundary
 
   return (
     <article className="space-y-6">
