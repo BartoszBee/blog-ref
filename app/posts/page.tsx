@@ -1,46 +1,48 @@
+// app/posts/page.tsx
 import Link from "next/link";
 
-type PostListItem = {
-  slug: string;
+type Post = {
+  id: number;
   title: string;
-  excerpt: string;
+  body: string;
 };
 
-const POSTS: PostListItem[] = [
-  {
-    slug: "hello-next",
-    title: "Hello Next.js",
-    excerpt: "Pierwszy wpis w projekcie referencyjnym.",
-  },
-  {
-    slug: "routing-basics",
-    title: "Routing w App Router",
-    excerpt: "Jak foldery zamieniają się w adresy URL.",
-  },
-];
+async function getPosts(): Promise<Post[]> {
+  const response = await fetch(
+    "https://jsonplaceholder.typicode.com/posts",
+  );
 
-export default function PostsPage(){
+  if (!response.ok) {
+    throw new Error("Nie udało się pobrać wpisów");
+  }
+
+  return response.json();
+}
+
+export default async function PostsPage(){
+  const posts = await getPosts();
+
   return (
     <section className="space-y-8">
       <header className="space-y-2">
         <h1 className="text-3xl font-bold">Wpisy</h1>
         <p className="text-muted-foreground">
-          Publiczna lista wpisów blogowych.
+          Lista wpisów pobrana na serwerze (Server Component).
         </p>
       </header>
 
       <ul className="space-y-6">
-        {POSTS.map((post) => (
-          <li key={post.slug} className="space-y-1">
+        {posts.slice(0, 10).map((post) => (
+          <li key={post.id} className="space-y-1">
             <Link
-              href={`/posts/${post.slug}`}
+              href={`/posts/${post.id}`}
               className="text-xl font-semibold hover:underline"
             >
               {post.title}
             </Link>
 
             <p className="text-muted-foreground">
-              {post.excerpt}
+              {post.body.slice(0, 80)}…
             </p>
           </li>
         ))}
