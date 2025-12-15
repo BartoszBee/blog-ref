@@ -1,2 +1,13 @@
 @import "tailwindcss";
 
+.text-foreground {
+  color: black;
+}
+
+.text-muted-foreground {
+  color: gray;
+}
+
+.bg-background {
+  background-color: white;
+}
