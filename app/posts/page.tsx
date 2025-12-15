@@ -1,4 +1,3 @@
-// app/posts/page.tsx
 import Link from "next/link";
 
 type Post = {
@@ -8,9 +7,11 @@ type Post = {
 };
 
 async function getPosts(): Promise<Post[]> {
-  const response = await fetch(
-    "https://jsonplaceholder.typicode.com/posts",
-  );
+  const response = await fetch("https://jsonplaceholder.typicode.com/posts", {
+    next: {
+      revalidate: 60, // odśwież dane maks. raz na 60 sekund
+    },
+  });
 
   if (!response.ok) {
     throw new Error("Nie udało się pobrać wpisów");
@@ -19,7 +20,7 @@ async function getPosts(): Promise<Post[]> {
   return response.json();
 }
 
-export default async function PostsPage(){
+export default async function PostsPage() {
   const posts = await getPosts();
 
   return (
@@ -41,9 +42,7 @@ export default async function PostsPage(){
               {post.title}
             </Link>
 
-            <p className="text-muted-foreground">
-              {post.body.slice(0, 80)}…
-            </p>
+            <p className="text-muted-foreground">{post.body.slice(0, 80)}…</p>
           </li>
         ))}
       </ul>
