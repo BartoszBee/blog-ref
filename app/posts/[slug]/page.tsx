@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+
 type Params = {
   slug: string;
 };
@@ -55,16 +56,23 @@ export async function generateMetadata({
   };
 }
 
+
+const sleep = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
+
 export default async function PostPage({
   params,
 }: PostPageProps){
   const { slug } = await params;
+
+ await sleep(1000);
 
   const post = POSTS.find((p) => p.slug === slug);
 
   if (!post) {
     notFound();
   }
+
 
   return (
     <article className="space-y-6">
