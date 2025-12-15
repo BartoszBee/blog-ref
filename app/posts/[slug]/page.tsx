@@ -11,14 +11,22 @@ const POSTS = [
   "routing-basics",
 ];
 
+/**
+ * Next.js użyje tej funkcji w build time,
+ * żeby wiedzieć, jakie strony wygenerować statycznie.
+ */
+export function generateStaticParams(): {
+  slug: string;
+}[] {
+  return POSTS.map((slug) => ({ slug }));
+}
+
 export default async function PostPage({
   params,
-}: PostPageProps) {
+}: PostPageProps){
   const { slug } = await params;
 
-  const postExists = POSTS.includes(slug);
-
-  if (!postExists) {
+  if (!POSTS.includes(slug)) {
     notFound();
   }
 
@@ -30,13 +38,16 @@ export default async function PostPage({
         </h1>
 
         <p className="text-muted-foreground">
-          Wpis istnieje — dlatego widzisz tę stronę.
+          Ta strona została wygenerowana statycznie w build time.
         </p>
       </header>
 
       <p>
-        To jest poprawnie obsłużony routing dynamiczny
-        z walidacją i 404.
+        Next.js wiedział o tym slugu wcześniej dzięki
+        <code className="mx-1 rounded bg-muted px-1 py-0.5 font-mono">
+          generateStaticParams
+        </code>
+        .
       </p>
     </article>
   );
