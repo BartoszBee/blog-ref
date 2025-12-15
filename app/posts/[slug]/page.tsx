@@ -1,24 +1,58 @@
 import { notFound } from "next/navigation";
+import type { Metadata } from "next";
+
+type Params = {
+  slug: string;
+};
 
 type PostPageProps = {
-  params: Promise<{
-    slug: string;
-  }>;
+  params: Promise<Params>;
 };
 
 const POSTS = [
-  "hello-next",
-  "routing-basics",
+  {
+    slug: "hello-next",
+    title: "Hello Next.js",
+    excerpt: "Pierwszy wpis w projekcie referencyjnym.",
+  },
+  {
+    slug: "routing-basics",
+    title: "Routing w App Router",
+    excerpt: "Jak foldery zamieniają się w adresy URL.",
+  },
 ];
 
 /**
- * Next.js użyje tej funkcji w build time,
- * żeby wiedzieć, jakie strony wygenerować statycznie.
+ * SSG — lista stron do wygenerowania w build time
  */
-export function generateStaticParams(): {
-  slug: string;
-}[] {
-  return POSTS.map((slug) => ({ slug }));
+export function generateStaticParams(): Params[] {
+  return POSTS.map(({ slug }) => ({ slug }));
+}
+
+/**
+ * Dynamiczne SEO — PER STRONA
+ * (zgodne z najnowszą dokumentacją)
+ */
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<Params>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
+  const post = POSTS.find((p) => p.slug === slug);
+
+  if (!post) {
+    return {
+      title: "Post not found",
+      description: "Nie znaleziono wpisu.",
+    };
+  }
+
+  return {
+    title: post.title,
+    description: post.excerpt,
+  };
 }
 
 export default async function PostPage({
@@ -26,7 +60,9 @@ export default async function PostPage({
 }: PostPageProps){
   const { slug } = await params;
 
-  if (!POSTS.includes(slug)) {
+  const post = POSTS.find((p) => p.slug === slug);
+
+  if (!post) {
     notFound();
   }
 
@@ -34,20 +70,17 @@ export default async function PostPage({
     <article className="space-y-6">
       <header>
         <h1 className="text-3xl font-bold">
-          Wpis: {slug}
+          {post.title}
         </h1>
 
         <p className="text-muted-foreground">
-          Ta strona została wygenerowana statycznie w build time.
+          {post.excerpt}
         </p>
       </header>
 
       <p>
-        Next.js wiedział o tym slugu wcześniej dzięki
-        <code className="mx-1 rounded bg-muted px-1 py-0.5 font-mono">
-          generateStaticParams
-        </code>
-        .
+        Ta strona ma <strong>własne SEO</strong>, wygenerowane
+        dynamicznie na podstawie sluga.
       </p>
     </article>
   );
