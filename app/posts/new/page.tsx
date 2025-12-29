@@ -1,46 +1,30 @@
-import { redirect } from "next/navigation";
-import { revalidatePath } from "next/cache";
+"use client";
+
+import { useActionState } from "react";
 import SubmitButton from "./SubmitButton";
+import createPost from "./createPostAction"
 
 
-type CreatePostInput = {
-  title: string;
-};
+export default function NewPostPage() { 
 
-const POSTS: CreatePostInput[] = [];
+  const [state, formAction] = useActionState(createPost, {});
 
-/**
- * Server Action
- */
-async function createPost(formData: FormData): Promise<void> {
-  "use server";
-
-  const title = formData.get("title");
-
-  if (typeof title !== "string" || title.length === 0) {
-    throw new Error("Tytuł jest wymagany");
-  }
-
-  POSTS.push({ title });
-
-  revalidatePath("/posts");
-  redirect("/posts");
-}
-
-
-
-
-export default function NewPostPage() {
   return (
     <section className="mx-auto max-w-md space-y-6">
       <h1 className="text-2xl font-bold">Nowy wpis</h1>
 
-      <form action={createPost} className="space-y-4">
-        <input
-          name="title"
-          placeholder="Tytuł wpisu"
-          className="w-full rounded border px-3 py-2"
-        />
+      <form action={formAction} className="space-y-4">
+        <div className="space-y-1">
+          <input
+            name="title"
+            placeholder="Tytuł wpisu"
+            className="w-full rounded border px-3 py-2"
+          />
+
+          {state.error && (
+            <p className="text-sm text-destructive">{state.error}</p>
+          )}
+        </div>
 
         <SubmitButton />
       </form>
