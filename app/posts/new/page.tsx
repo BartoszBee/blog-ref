@@ -1,0 +1,44 @@
+import { redirect } from "next/navigation";
+
+type CreatePostInput = {
+  title: string;
+};
+
+const POSTS: CreatePostInput[] = [];
+
+async function createPost(formData: FormData): Promise<void> {
+  "use server";
+
+  const title = formData.get("title");
+
+  if (typeof title !== "string" || title.length === 0) {
+    throw new Error("Tytuł jest wymagany");
+  }
+
+  POSTS.push({ title });
+
+  redirect("/posts");
+}
+
+export default function NewPostPage() {
+  return (
+    <section className="mx-auto max-w-md space-y-6">
+      <h1 className="text-2xl font-bold">Nowy wpis</h1>
+
+      <form action={createPost} className="space-y-4">
+        <input
+          name="title"
+          placeholder="Tytuł wpisu"
+          className="w-full rounded border px-3 py-2"
+        />
+
+        <button
+          type="submit"
+          className="rounded bg-black px-4 py-2 text-white hover:bg-black/80"
+        >
+          Dodaj wpis
+        </button>
+      </form>
+    </section>
+  );
+}
