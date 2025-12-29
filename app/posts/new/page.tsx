@@ -1,5 +1,7 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
+import SubmitButton from "./SubmitButton";
+
 
 type CreatePostInput = {
   title: string;
@@ -7,6 +9,9 @@ type CreatePostInput = {
 
 const POSTS: CreatePostInput[] = [];
 
+/**
+ * Server Action
+ */
 async function createPost(formData: FormData): Promise<void> {
   "use server";
 
@@ -19,9 +24,11 @@ async function createPost(formData: FormData): Promise<void> {
   POSTS.push({ title });
 
   revalidatePath("/posts");
-
   redirect("/posts");
 }
+
+
+
 
 export default function NewPostPage() {
   return (
@@ -35,12 +42,7 @@ export default function NewPostPage() {
           className="w-full rounded border px-3 py-2"
         />
 
-        <button
-          type="submit"
-          className="rounded bg-black px-4 py-2 text-white hover:bg-black/80"
-        >
-          Dodaj wpis
-        </button>
+        <SubmitButton />
       </form>
     </section>
   );
