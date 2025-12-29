@@ -1,4 +1,5 @@
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 type CreatePostInput = {
   title: string;
@@ -16,6 +17,8 @@ async function createPost(formData: FormData): Promise<void> {
   }
 
   POSTS.push({ title });
+
+  revalidatePath("/posts");
 
   redirect("/posts");
 }
