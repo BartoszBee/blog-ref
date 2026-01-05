@@ -1,95 +1,73 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { getPostById } from "@/lib/posts.repo";
 
+/**
+ * WYMUSZENIE RUNTIME (BRAK SSG)
+ */
+export const dynamic = "force-dynamic";
 
 type Params = {
-  slug: string;
+  id: string;
 };
 
 type PostPageProps = {
   params: Promise<Params>;
 };
 
-const POSTS = [
-  {
-    slug: "hello-next",
-    title: "Hello Next.js",
-    excerpt: "Pierwszy wpis w projekcie referencyjnym.",
-  },
-  {
-    slug: "routing-basics",
-    title: "Routing w App Router",
-    excerpt: "Jak foldery zamieniają się w adresy URL.",
-  },
-];
-
 /**
- * SSG — lista stron do wygenerowania w build time
- */
-export function generateStaticParams(): Params[] {
-  return POSTS.map(({ slug }) => ({ slug }));
-}
-
-/**
- * Dynamiczne SEO — PER STRONA
- * (zgodne z najnowszą dokumentacją)
+ * Dynamiczne SEO — runtime
  */
 export async function generateMetadata({
   params,
 }: {
   params: Promise<Params>;
 }): Promise<Metadata> {
-  const { slug } = await params;
+  const { id } = await params;
+  const postId = Number(id);
 
-  const post = POSTS.find((p) => p.slug === slug);
+  if (!postId) {
+    return {
+      title: "Post not found",
+      description: "Post not found",
+    };
+  }
+
+  const post = getPostById(postId);
 
   if (!post) {
     return {
       title: "Post not found",
-      description: "Nie znaleziono wpisu.",
+      description: "Post not found",
     };
   }
 
   return {
     title: post.title,
-    description: post.excerpt,
+    description: post.title,
   };
 }
 
+export default async function PostPage({ params }: PostPageProps) {
+  const { id } = await params;
+  const postId = Number(id);
 
-const sleep = (ms: number) =>
-  new Promise((resolve) => setTimeout(resolve, ms));
+  if (!postId) {
+    notFound();
+  }
 
-export default async function PostPage({
-  params,
-}: PostPageProps){
-  const { slug } = await params;
-
- await sleep(1000);
-
-  const post = POSTS.find((p) => p.slug === slug);
+  const post = getPostById(postId);
 
   if (!post) {
     notFound();
   }
 
-//   throw new Error('Unexpected error!'); // test error boundary
-
   return (
     <article className="space-y-6">
-      <header>
-        <h1 className="text-3xl font-bold">
-          {post.title}
-        </h1>
+      <h1 className="text-3xl font-bold">{post.title}</h1>
 
-        <p className="text-muted-foreground">
-          {post.excerpt}
-        </p>
-      </header>
-
-      <p>
-        Ta strona ma <strong>własne SEO</strong>, wygenerowane
-        dynamicznie na podstawie sluga.
+      <p className="text-muted-foreground">
+        In-memory post widoczny w runtime.
       </p>
     </article>
   );

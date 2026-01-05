@@ -2,12 +2,13 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { updatePost } from "@/lib/posts.repo";
 
 type FormState = {
   error?: string;
 };
 
-export default async function updatePost(
+export default async function updatePostAction(
   prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
@@ -18,8 +19,11 @@ export default async function updatePost(
     return { error: "Nieprawidłowe dane" };
   }
 
-  // symulacja zapisu
-  await new Promise((resolve) => setTimeout(resolve, 500));
+  const success = updatePost(id, title);
+
+  if (!success) {
+    return { error: "Wpis nie istnieje" };
+  }
 
   revalidatePath("/posts");
 

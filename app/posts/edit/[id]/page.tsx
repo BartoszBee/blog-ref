@@ -1,17 +1,8 @@
 import { redirect } from "next/navigation";
-import DeleteForm from "./DeleteForm";
+import { getPostById } from "@/lib/posts.repo";
 import { getSession } from "@/lib/auth";
 import EditForm from "./EditForm";
-
-type Post = {
-  id: number;
-  title: string;
-};
-
-const POSTS: Post[] = [
-  { id: 1, title: "Hello Next.js" },
-  { id: 2, title: "Routing w App Router" },
-];
+import DeleteForm from "./DeleteForm";
 
 export default async function EditPostPage({
   params,
@@ -23,7 +14,12 @@ export default async function EditPostPage({
 
   const { id } = await params;
   const postId = Number(id);
-  const post = POSTS.find((p) => p.id === postId);
+
+  if (!postId) {
+    redirect("/posts");
+  }
+
+  const post = getPostById(postId);
 
   if (!post) {
     redirect("/posts");

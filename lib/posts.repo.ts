@@ -8,8 +8,8 @@ export type Post = {
  * Zostanie zastąpione DB bez zmiany API
  */
 let POSTS: Post[] = [
-  { id: 1, title: "Hello Next.js" },
-  { id: 2, title: "Routing w App Router" },
+  { id: 1, title: "Hello Next.js 1" },
+  { id: 2, title: "Routing w App Router 1" },
 ];
 
 /**

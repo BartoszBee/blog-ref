@@ -1,9 +1,8 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
-import ProtectedForm from './newPostForm'
-import { JSX } from "react";
+import ProtectedForm from "./newPostForm";
 
-export default async function NewPostPage(): Promise<JSX.Element> {
+export default async function NewPostPage() {
   const session = await getSession();
 
   if (!session) {

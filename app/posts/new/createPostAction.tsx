@@ -1,23 +1,16 @@
 "use server";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
-
-type CreatePostInput = {
-  title: string;
-};
+import { createPost } from "@/lib/posts.repo";
 
 type FormState = {
   error?: string;
 };
 
-const POSTS: CreatePostInput[] = [];
-
-export default async function createPost(
+export default async function createPostAction(
   prevState: FormState,
   formData: FormData
 ): Promise<FormState> {
-  
-
   const title = formData.get("title");
 
   if (typeof title !== "string" || title.trim().length === 0) {
@@ -26,7 +19,7 @@ export default async function createPost(
     };
   }
 
-  POSTS.push({ title });
+  createPost(title.trim());
 
   revalidatePath("/posts");
   redirect("/posts");
