@@ -8,7 +8,7 @@ import { getPostById } from "@/lib/posts.repo";
 export const dynamic = "force-dynamic";
 
 type Params = {
-  id: string;
+  slug: string;
 };
 
 type PostPageProps = {
@@ -23,8 +23,8 @@ export async function generateMetadata({
 }: {
   params: Promise<Params>;
 }): Promise<Metadata> {
-  const { id } = await params;
-  const postId = Number(id);
+  const { slug } = await params;
+  const postId = Number(slug);
 
   if (!postId) {
     return {
@@ -49,8 +49,8 @@ export async function generateMetadata({
 }
 
 export default async function PostPage({ params }: PostPageProps) {
-  const { id } = await params;
-  const postId = Number(id);
+  const { slug } = await params;
+  const postId = Number(slug);
 
   if (!postId) {
     notFound();
