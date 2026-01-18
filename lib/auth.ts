@@ -1,9 +1,17 @@
+// lib/auth.ts
+import "server-only";
 import { cookies } from "next/headers";
+import { getSessionById } from "@/lib/sessions.repo";
+import { getUserById } from "@/lib/users.repo";
 
 const SESSION_COOKIE_NAME = "session";
 
 export type Session = {
-  userId: string;
+  user: {
+    id: string;
+    email: string;
+    role: "author" | "admin";
+  };
 };
 
 export async function getSession(): Promise<Session | null> {
@@ -14,8 +22,23 @@ export async function getSession(): Promise<Session | null> {
     return null;
   }
 
+  const session = await getSessionById(sessionCookie.value);
+
+  if (!session) {
+    return null;
+  }
+
+  const user = await getUserById(session.user_id);
+
+  if (!user) {
+    return null;
+  }
 
   return {
-    userId: sessionCookie.value,
+    user: {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+    },
   };
 }
