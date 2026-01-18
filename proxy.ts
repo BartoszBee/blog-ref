@@ -1,54 +1,21 @@
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
-type Role = "author" | "admin";
-
-function parseSession(value: string): { userId: string; role: Role } | null {
-  const [userId, role] = value.split(":");
-
-  if (!userId || (role !== "author" && role !== "admin")) {
-    return null;
-  }
-
-  return { userId, role };
-}
+const SESSION_COOKIE_NAME = "session";
 
 export function proxy(request: NextRequest) {
-  const sessionCookie = request.cookies.get("session");
+  const sessionCookie = request.cookies.get(SESSION_COOKIE_NAME);
 
+  // Brak sesji → login
   if (!sessionCookie) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
-  const session = parseSession(sessionCookie.value);
-
-  if (!session) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  const pathname = request.nextUrl.pathname;
-
-
-  if (pathname.startsWith("/admin") && session.role !== "admin") {
-    return NextResponse.redirect(new URL("/posts", request.url));
-  }
- 
-  // test jan:author
-  if (pathname.startsWith("/posts/new") && session.role === "author") {
-    return NextResponse.next();
-  }
-
-  // test jan:admin
-  if (pathname.startsWith("/posts/new") && session.role === "admin") {
-    return NextResponse.next();
-  }
-
+  // Sesja istnieje → przepuszczamy dalej
+  // Szczegóły (rola, user) sprawdzane są w getSession() na serwerze
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: [
-    "/posts/new",
-    "/admin/:path*",
-  ],
+  matcher: ["/posts/new", "/admin/:path*"],
 };
