@@ -1,34 +1,25 @@
-import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
-
-async function login(formData: FormData): Promise<void> {
-  "use server";
-
-  const username = formData.get("username");
-
-  if (typeof username !== "string" || username.length === 0) {
-    throw new Error("Username jest wymagany");
-  }
-
-  const cookieStore = await cookies();
-
-  cookieStore.set("session", username, {
-    httpOnly: true,
-    path: "/",
-  });
-
-  redirect("/posts");
-}
+// app/login/page.tsx
+import { loginAction } from "./loginAction";
 
 export default function LoginPage() {
   return (
     <section className="mx-auto max-w-md space-y-6">
       <h1 className="text-2xl font-bold">Logowanie</h1>
 
-      <form action={login} className="space-y-4">
+      <form action={loginAction} className="space-y-4">
         <input
-          name="username"
-          placeholder="Nazwa użytkownika"
+          type="email"
+          name="email"
+          placeholder="Email"
+          required
+          className="w-full rounded border px-3 py-2"
+        />
+
+        <input
+          type="password"
+          name="password"
+          placeholder="Hasło"
+          required
           className="w-full rounded border px-3 py-2"
         />
 
