@@ -33,7 +33,7 @@ export async function generateMetadata({
     };
   }
 
-  const post = getPostById(postId);
+  const post = await getPostById(postId);
 
   if (!post) {
     return {
@@ -56,7 +56,7 @@ export default async function PostPage({ params }: PostPageProps) {
     notFound();
   }
 
-  const post = getPostById(postId);
+  const post = await getPostById(postId);
 
   if (!post) {
     notFound();

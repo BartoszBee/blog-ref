@@ -1,92 +1,76 @@
-import fs from "fs";
-import path from "path";
+// lib/posts.repo.ts
+import "server-only";
+import { db } from "@/lib/db";
 
 export type Post = {
   id: number;
   title: string;
+  created_at: string;
 };
-
-/**
- * Plik danych (JSON jako storage)
- */
-const DATA_FILE = path.join(process.cwd(), "data", "posts.json");
-
-/**
- * Inicjalizacja pliku, jeśli nie istnieje
- */
-function ensureFile() {
-  if (!fs.existsSync(DATA_FILE)) {
-    fs.mkdirSync(path.dirname(DATA_FILE), { recursive: true });
-    fs.writeFileSync(DATA_FILE, JSON.stringify([], null, 2));
-  }
-}
-
-/**
- * READ — całość (internal)
- */
-function readPosts(): Post[] {
-  ensureFile();
-  const raw = fs.readFileSync(DATA_FILE, "utf-8");
-  return JSON.parse(raw) as Post[];
-}
-
-/**
- * WRITE — całość (internal)
- */
-function writePosts(posts: Post[]) {
-  fs.writeFileSync(DATA_FILE, JSON.stringify(posts, null, 2));
-}
 
 /**
  * READ — lista
  */
-export function getPosts(): Post[] {
-  return readPosts();
+export async function getPosts(): Promise<Post[]> {
+  const { rows } = await db.query<Post>(
+    `select id, title, created_at
+     from posts
+     order by created_at desc`,
+  );
+
+  return rows;
 }
 
 /**
  * READ — jeden wpis
  */
-export function getPostById(id: number): Post | undefined {
-  return readPosts().find((p) => p.id === id);
+export async function getPostById(id: number): Promise<Post | undefined> {
+  const { rows } = await db.query<Post>(
+    `select id, title, created_at
+     from posts
+     where id = $1
+     limit 1`,
+    [id],
+  );
+
+  return rows[0];
 }
 
 /**
  * CREATE
  */
-export function createPost(title: string): Post {
-  const posts = readPosts();
+export async function createPost(title: string): Promise<Post> {
+  const { rows } = await db.query<Post>(
+    `insert into posts (title)
+     values ($1)
+     returning id, title, created_at`,
+    [title],
+  );
 
-  const post: Post = {
-    id: Date.now(),
-    title,
-  };
-
-  posts.push(post);
-  writePosts(posts);
-
-  return post;
+  return rows[0];
 }
 
 /**
  * UPDATE
  */
-export function updatePost(id: number, title: string): boolean {
-  const posts = readPosts();
-  const post = posts.find((p) => p.id === id);
+export async function updatePost(id: number, title: string): Promise<boolean> {
+  const result = await db.query(
+    `update posts
+     set title = $1
+     where id = $2`,
+    [title, id],
+  );
 
-  if (!post) return false;
-
-  post.title = title;
-  writePosts(posts);
-
-  return true;
+  return result.rowCount === 1;
 }
 
 /**
  * DELETE
  */
-export function deletePost(id: number): void {
-  const posts = readPosts().filter((p) => p.id !== id);
-  writePosts(posts);
+export async function deletePost(id: number): Promise<void> {
+  await db.query(
+    `delete from posts
+     where id = $1`,
+    [id],
+  );
 }

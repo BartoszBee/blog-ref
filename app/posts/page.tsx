@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export default async function PostsPage() {
   const session = await getSession();
-  const posts = getPosts();
+  const posts = await getPosts();
 
   return (
     <section className="space-y-8">
@@ -21,19 +21,12 @@ export default async function PostsPage() {
       </header>
 
       {posts.length === 0 ? (
-        <p className="text-muted-foreground">
-          Brak wpisów.
-        </p>
+        <p className="text-muted-foreground">Brak wpisów.</p>
       ) : (
         <ul className="space-y-6">
           {posts.map((post) => (
-            <li
-              key={post.id}
-              className="rounded border p-4 space-y-2"
-            >
-              <h2 className="text-xl font-semibold">
-                {post.title}
-              </h2>
+            <li key={post.id} className="rounded border p-4 space-y-2">
+              <h2 className="text-xl font-semibold">{post.title}</h2>
 
               <div className="flex gap-4 text-sm">
                 <Link

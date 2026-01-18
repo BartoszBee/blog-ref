@@ -19,7 +19,7 @@ export default async function EditPostPage({
     redirect("/posts");
   }
 
-  const post = getPostById(postId);
+  const post = await getPostById(postId);
 
   if (!post) {
     redirect("/posts");

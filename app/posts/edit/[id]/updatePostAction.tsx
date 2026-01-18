@@ -10,7 +10,7 @@ type FormState = {
 
 export default async function updatePostAction(
   prevState: FormState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormState> {
   const id = Number(formData.get("id"));
   const title = formData.get("title");
@@ -19,7 +19,7 @@ export default async function updatePostAction(
     return { error: "Nieprawidłowe dane" };
   }
 
-  const success = updatePost(id, title);
+  const success = await updatePost(id, title);
 
   if (!success) {
     return { error: "Wpis nie istnieje" };
