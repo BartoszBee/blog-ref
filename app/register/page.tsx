@@ -1,12 +1,18 @@
-// app/register/page.tsx
-import { registerAction } from "./registerAction";
+"use client";
+
+import { useActionState } from "react";
+import { registerAction, RegisterState } from "./registerAction";
+
+const initialState: RegisterState = { ok: true };
 
 export default function RegisterPage() {
+  const [state, formAction] = useActionState(registerAction, initialState);
+
   return (
     <section className="mx-auto max-w-md space-y-6">
       <h1 className="text-2xl font-bold">Rejestracja</h1>
 
-      <form action={registerAction} className="space-y-4">
+      <form action={formAction} className="space-y-4">
         <input
           type="email"
           name="email"
@@ -22,6 +28,10 @@ export default function RegisterPage() {
           required
           className="w-full rounded border px-3 py-2"
         />
+
+        {state.ok === false && (
+          <p className="text-sm text-red-600">{state.error}</p>
+        )}
 
         <button
           type="submit"

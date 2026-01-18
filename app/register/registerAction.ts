@@ -2,35 +2,38 @@
 "use server";
 
 import bcrypt from "bcrypt";
-import { redirect } from "next/navigation";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
 import { getUserByEmail, createUser } from "@/lib/users.repo";
 import { createSession } from "@/lib/sessions.repo";
 
 const SESSION_COOKIE_NAME = "session";
 
-export async function registerAction(formData: FormData): Promise<void> {
+export type RegisterState = { ok: true } | { ok: false; error: string };
+
+export async function registerAction(
+  _prevState: RegisterState,
+  formData: FormData,
+): Promise<RegisterState> {
   const email = formData.get("email");
   const password = formData.get("password");
 
   if (typeof email !== "string" || typeof password !== "string") {
-    throw new Error("Nieprawidłowe dane");
+    return { ok: false, error: "Nieprawidłowe dane formularza" };
   }
 
   if (password.length < 6) {
-    throw new Error("Hasło musi mieć co najmniej 6 znaków");
+    return { ok: false, error: "Hasło musi mieć co najmniej 6 znaków" };
   }
 
   const existingUser = await getUserByEmail(email);
   if (existingUser) {
-    throw new Error("Użytkownik z tym emailem już istnieje");
+    return { ok: false, error: "Użytkownik z tym emailem już istnieje" };
   }
 
   const passwordHash = await bcrypt.hash(password, 10);
-
   const user = await createUser(email, passwordHash);
-
   const session = await createSession(user.id);
 
   const cookieStore = await cookies();
