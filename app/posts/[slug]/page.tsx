@@ -2,11 +2,6 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getPostById } from "@/lib/posts.repo";
 
-/**
- * WYMUSZENIE RUNTIME (BRAK SSG)
- */
-export const dynamic = "force-dynamic";
-
 type Params = {
   slug: string;
 };

@@ -26,6 +26,7 @@ export default async function updatePostAction(
   }
 
   revalidatePath("/posts");
+  revalidatePath(`/posts/${id}`);
 
   redirect("/posts");
 }

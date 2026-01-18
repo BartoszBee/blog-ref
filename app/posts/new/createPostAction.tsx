@@ -9,7 +9,7 @@ type FormState = {
 
 export default async function createPostAction(
   prevState: FormState,
-  formData: FormData
+  formData: FormData,
 ): Promise<FormState> {
   const title = formData.get("title");
 
@@ -19,7 +19,7 @@ export default async function createPostAction(
     };
   }
 
-  createPost(title.trim());
+  await createPost(title.trim());
 
   revalidatePath("/posts");
   redirect("/posts");

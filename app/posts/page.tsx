@@ -2,11 +2,6 @@ import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { getPosts } from "@/lib/posts.repo";
 
-/**
- * WYMUSZENIE RUNTIME (IN-MEMORY CRUD)
- */
-export const dynamic = "force-dynamic";
-
 export default async function PostsPage() {
   const session = await getSession();
   const posts = await getPosts();
