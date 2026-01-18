@@ -1,24 +1,25 @@
-
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
+import { getSession } from "@/lib/auth";
+import { LogoutButton } from "@/components/LogoutButton";
 
 export const metadata: Metadata = {
   title: {
     default: "Blog Reference",
     template: "%s | Blog Reference",
   },
-  description:
-    "Referencyjny system blogowy zbudowany w Next.js (App Router).",
+  description: "Referencyjny system blogowy zbudowany w Next.js (App Router).",
 };
 
 type RootLayoutProps = {
   children: React.ReactNode;
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: RootLayoutProps) {
+}: Readonly<RootLayoutProps>) {
+  const session = await getSession();
   return (
     <html lang="pl">
       <body className="min-h-screen bg-background text-foreground">
@@ -28,15 +29,17 @@ export default function RootLayout({
               Home
             </Link>
 
-            <Link href="/posts" className="text-muted-foreground hover:text-foreground">
+            <Link
+              href="/posts"
+              className="text-muted-foreground hover:text-foreground"
+            >
               Posts
             </Link>
+            {session && <LogoutButton />}
           </nav>
         </header>
 
-        <main className="mx-auto max-w-5xl p-6">
-          {children}
-        </main>
+        <main className="mx-auto max-w-5xl p-6">{children}</main>
       </body>
     </html>
   );
