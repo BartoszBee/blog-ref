@@ -9,6 +9,8 @@ export type User = {
   role: "author" | "admin";
 };
 
+export type PublicUser = Omit<User, "password_hash">;
+
 /**
  * READ — po emailu (login)
  */
@@ -43,4 +45,24 @@ export async function getUserById(
   );
 
   return rows[0] ?? null;
+}
+
+/**
+ * CREATE — nowy użytkownik (rejestracja)
+ */
+export async function createUser(
+  email: string,
+  passwordHash: string,
+  role: "author" | "admin" = "author",
+): Promise<PublicUser> {
+  const { rows } = await db.query<PublicUser>(
+    `
+    insert into users (email, password_hash, role)
+    values ($1, $2, $3)
+    returning id, email, role
+    `,
+    [email.toLowerCase(), passwordHash, role],
+  );
+
+  return rows[0];
 }

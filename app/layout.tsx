@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import "./globals.css";
-import { getSession } from "@/lib/auth";
-import { LogoutButton } from "@/components/LogoutButton";
+import { AuthNav } from "@/components/AuthNav";
 
 export const metadata: Metadata = {
   title: {
@@ -19,7 +18,6 @@ type RootLayoutProps = {
 export default async function RootLayout({
   children,
 }: Readonly<RootLayoutProps>) {
-  const session = await getSession();
   return (
     <html lang="pl">
       <body className="min-h-screen bg-background text-foreground">
@@ -35,7 +33,7 @@ export default async function RootLayout({
             >
               Posts
             </Link>
-            {session && <LogoutButton />}
+            <AuthNav />
           </nav>
         </header>
 
