@@ -1,13 +1,12 @@
-// app/login/page.tsx
-import Link from "next/link";
-import { loginAction } from "./loginAction";
+// app/register/page.tsx
+import { registerAction } from "./registerAction";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <section className="mx-auto max-w-md space-y-6">
-      <h1 className="text-2xl font-bold">Logowanie</h1>
+      <h1 className="text-2xl font-bold">Rejestracja</h1>
 
-      <form action={loginAction} className="space-y-4">
+      <form action={registerAction} className="space-y-4">
         <input
           type="email"
           name="email"
@@ -19,7 +18,7 @@ export default function LoginPage() {
         <input
           type="password"
           name="password"
-          placeholder="Hasło"
+          placeholder="Hasło (min. 6 znaków)"
           required
           className="w-full rounded border px-3 py-2"
         />
@@ -28,15 +27,9 @@ export default function LoginPage() {
           type="submit"
           className="w-full rounded bg-black px-4 py-2 text-white hover:bg-black/80"
         >
-          Zaloguj
+          Zarejestruj się
         </button>
       </form>
-      <p className="text-sm text-center text-muted-foreground">
-        Nie masz konta?{" "}
-        <Link href="/register" className="text-blue-600 hover:underline">
-          Zarejestruj się
-        </Link>
-      </p>
     </section>
   );
 }
