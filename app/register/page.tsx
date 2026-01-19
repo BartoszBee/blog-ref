@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import { registerAction, RegisterState } from "./registerAction";
+import RegisterButton from "@/components/RegisterButton";
 
 const initialState: RegisterState = { ok: true };
 
@@ -33,12 +34,7 @@ export default function RegisterPage() {
           <p className="text-sm text-red-600">{state.error}</p>
         )}
 
-        <button
-          type="submit"
-          className="w-full rounded bg-black px-4 py-2 text-white hover:bg-black/80"
-        >
-          Zarejestruj się
-        </button>
+        <RegisterButton />
       </form>
     </section>
   );
