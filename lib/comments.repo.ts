@@ -72,3 +72,32 @@ export async function deleteComment(commentId: string): Promise<void> {
     [commentId],
   );
 }
+
+/**
+ * READ — wszystkie komentarze (admin)
+ */
+export async function getAllComments(): Promise<
+  Array<{
+    id: string;
+    content: string;
+    created_at: string;
+    post_id: number;
+    author_email: string;
+  }>
+> {
+  const { rows } = await db.query(
+    `
+    select
+      c.id,
+      c.content,
+      c.created_at,
+      c.post_id,
+      u.email as author_email
+    from comments c
+    join users u on u.id = c.user_id
+    order by c.created_at desc
+    `,
+  );
+
+  return rows;
+}
