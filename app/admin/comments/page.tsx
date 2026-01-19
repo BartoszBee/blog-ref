@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { getSession } from "@/lib/auth";
 import { getAllComments } from "@/lib/comments.repo";
 import { adminDeleteCommentAction } from "./deleteCommentAction";
+import DeleteButton from "@/components/DeleteCommentButton";
 
 export const dynamic = "force-dynamic";
 
@@ -16,21 +17,14 @@ export default async function AdminCommentsPage() {
 
   return (
     <section className="space-y-6">
-      <h1 className="text-2xl font-bold">
-        Moderacja komentarzy
-      </h1>
+      <h1 className="text-2xl font-bold">Moderacja komentarzy</h1>
 
       {comments.length === 0 ? (
-        <p className="text-muted-foreground">
-          Brak komentarzy.
-        </p>
+        <p className="text-muted-foreground">Brak komentarzy.</p>
       ) : (
         <ul className="space-y-4">
           {comments.map((c) => (
-            <li
-              key={c.id}
-              className="rounded border p-4 space-y-2"
-            >
+            <li key={c.id} className="rounded border p-4 space-y-2">
               <p className="text-sm">{c.content}</p>
 
               <div className="flex justify-between text-xs text-muted-foreground">
@@ -38,18 +32,8 @@ export default async function AdminCommentsPage() {
                   {c.author_email} • post #{c.post_id}
                 </span>
 
-                <form
-                  action={adminDeleteCommentAction.bind(
-                    null,
-                    c.id,
-                  )}
-                >
-                  <button
-                    type="submit"
-                    className="text-red-600 hover:underline"
-                  >
-                    Usuń
-                  </button>
+                <form action={adminDeleteCommentAction.bind(null, c.id)}>
+                  <DeleteButton />
                 </form>
               </div>
             </li>
