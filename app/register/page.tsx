@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { registerAction, RegisterState } from "./registerAction";
 import RegisterButton from "@/components/RegisterButton";
+import FormError from "@/components/FormError";
 
 const initialState: RegisterState = { ok: true };
 
@@ -30,9 +31,9 @@ export default function RegisterPage() {
           className="w-full rounded border px-3 py-2"
         />
 
-        {state.ok === false && (
-          <p className="text-sm text-red-600">{state.error}</p>
-        )}
+       
+
+        {state.ok === false && <FormError message={state.error} />}
 
         <RegisterButton />
       </form>

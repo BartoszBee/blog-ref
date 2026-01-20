@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import SubmitButton from "./SubmitButton";
 import createPost from "./createPostAction";
+import FormError from "@/components/FormError";
 
 export default function ProtectedForm() {
   const [state, formAction] = useActionState(createPost, {});
@@ -16,9 +17,8 @@ export default function ProtectedForm() {
           className="w-full rounded border px-3 py-2"
         />
 
-        {state.error && (
-          <p className="text-sm text-destructive">{state.error}</p>
-        )}
+        
+        {state.error && <FormError message={state.error} />}
       </div>
 
       <SubmitButton />

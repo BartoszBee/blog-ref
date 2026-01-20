@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import SubmitButton from "./SubmitButton";
 import updatePost from "./updatePostAction";
+import FormError from "@/components/FormError";
 
 type Post = {
   id: number;
@@ -28,9 +29,8 @@ export default function EditForm({ post }: { post: Post }){
           className="w-full rounded border px-3 py-2"
         />
 
-        {state.error && (
-          <p className="text-sm text-destructive">{state.error}</p>
-        )}
+       
+        {state.error && <FormError message={state.error} />}
       </div>
 
       <SubmitButton />

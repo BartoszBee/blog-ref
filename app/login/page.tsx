@@ -4,6 +4,7 @@ import { useActionState } from "react";
 import { loginAction, LoginState } from "./loginAction";
 import Link from "next/link";
 import LoginButton from "@/components/LoginButton";
+import FormError from "@/components/FormError";
 
 const initialState: LoginState = { ok: true };
 
@@ -31,9 +32,7 @@ export default function LoginPage() {
           className="w-full rounded border px-3 py-2"
         />
 
-        {state.ok === false && (
-          <p className="text-sm text-red-600">{state.error}</p>
-        )}
+        {state.ok === false && <FormError message={state.error} />}
 
         <LoginButton />
       </form>

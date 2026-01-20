@@ -3,6 +3,7 @@
 import { useActionState } from "react";
 import { useFormStatus } from "react-dom";
 import { addCommentAction } from "./comments/actions";
+import FormError from "@/components/FormError";
 
 type State = { ok: true } | { ok: false; error: string };
 
@@ -38,9 +39,7 @@ export function AddCommentForm({ postId }: { postId: number }) {
         disabled={false}
       />
 
-      {state.ok === false && (
-        <p className="text-sm text-red-600">{state.error}</p>
-      )}
+     {state.ok === false && <FormError message={state.error} />}
 
       <SubmitButton />
     </form>
