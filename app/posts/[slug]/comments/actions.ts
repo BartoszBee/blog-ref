@@ -11,6 +11,8 @@ type CommentActionResult =
   | { ok: true }
   | { ok: false; error: string };
 
+const FORCE_ERROR = false; // tylko do testów rollback optimistic update
+
 export async function addCommentAction(
   postId: number,
   _prevState: CommentActionResult,
@@ -19,6 +21,15 @@ export async function addCommentAction(
   const session = await getSession();
   if (!session) {
     return { ok: false, error: "Musisz być zalogowany" };
+  }
+
+  await new Promise(res => setTimeout(res, 1000)); // zobaczenie optimistic update
+
+  if (FORCE_ERROR) {
+    return {
+      ok: false,
+      error: "Testowy rollback – komentarz nie zapisany",
+    };
   }
 
   const content = formData.get("content");

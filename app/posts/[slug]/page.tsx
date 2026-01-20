@@ -1,10 +1,11 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-
 import { getPostById } from "@/lib/posts.repo";
 import CommentsList from "./CommentsList";
 import { AddCommentForm } from "./AddCommentForm";
 import { getSession } from "@/lib/auth";
+import { OptimisticCommentsProvider } from "@/context/OptimisticCommentsContext";
+import OptimisticComments from "@/components/OptimisticComments";
 
 /**
  * WYMUSZENIE RUNTIME
@@ -81,19 +82,21 @@ export default async function PostPage({ params }: PostPageProps) {
       </header>
 
       {/* KOMENTARZE */}
-      <section className="space-y-6">
-        <h2 className="text-xl font-semibold">Komentarze</h2>
+      <OptimisticCommentsProvider>
+        <section className="space-y-6">
+          <h2 className="text-xl font-semibold">Komentarze</h2>
 
-        {session ? (
-          <AddCommentForm postId={postId} />
-        ) : (
-          <p className="text-sm text-muted-foreground">
-            Zaloguj się, aby dodać komentarz.
-          </p>
-        )}
-
-        <CommentsList postId={postId} />
-      </section>
+          {session ? (
+            <AddCommentForm postId={postId} />
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              Zaloguj się, aby dodać komentarz.
+            </p>
+          )}          
+          <CommentsList postId={postId} />
+          <OptimisticComments />
+        </section>
+      </OptimisticCommentsProvider>
     </article>
   );
 }
